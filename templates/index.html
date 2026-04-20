@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindGuard AI - Your Emotional Companion</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container main-card">
+
+    <h1 class="app-title">
+        <i class="fas fa-brain"></i> MindGuard AI
+        <span class="tagline">Your Emotional Companion</span>
+    </h1>
+
+    <!-- INPUT -->
+    <div class="input-area">
+        <input type="text" id="text" placeholder="Share your thoughts..." 
+               onkeydown="if(event.keyCode===13) analyze();">
+
+        <button id="micBtn" onclick="startVoice()">🎤</button>
+        <button onclick="analyze()">Send <i class="fas fa-paper-plane"></i></button>
+    </div>
+
+    <!-- CHAT -->
+    <div id="chatBox" class="chat-display"></div>
+
+    <!-- EMOJI -->
+    <div class="feedback-area">
+        <div id="emoji" class="mood-indicator">🙂</div>
+        <p class="emoji-label">Current Mood</p>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-area">
+        <canvas id="moodChart"></canvas>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let chart;
+
+let currentChartData = {
+    labels: ['Positive', 'Negative', 'Neutral'],
+    datasets: [{
+        label: 'Mood',
+        data: [0, 0, 0],
+        backgroundColor: [
+            'rgba(144, 238, 144, 0.7)',
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(255, 206, 86, 0.7)'
+        ]
+    }]
+};
+
+// INIT CHART
+document.addEventListener("DOMContentLoaded", () => {
+    let ctx = document.getElementById("moodChart").getContext("2d");
+
+    chart = new Chart(ctx, {
+        type: "doughnut",
+        data: currentChartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "bottom",
+                    labels: {
+                        color: "#fff",
+                        font: { size: 14 }
+                    }
+                }
+            }
+        }
+    });
+});
+
+
+// 🎤 VOICE
+function startVoice(){
+    let rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    rec.lang = "en-US";
+
+    let mic = document.getElementById("micBtn");
+    mic.classList.add("listening");
+
+    rec.start();
+
+    rec.onresult = function(e){
+        document.getElementById("text").value = e.results[0][0].transcript;
+        mic.classList.remove("listening");
+        analyze();
+    };
+
+    rec.onerror = function(){
+        mic.classList.remove("listening");
+    };
+}
+
+
+// 🔍 ANALYZE
+function analyze(){
+    let textInput = document.getElementById("text");
+    let text = textInput.value.trim();
+
+    if(!text) return;
+
+    addMessage("You: " + text, "user");
+    textInput.value = "";
+
+    fetch("/analyze", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({text})
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        // BOT MESSAGE (SAFE)
+        typeBot(data.response, data.emotion);
+
+        // EMOJI
+        let emoji = document.getElementById("emoji");
+
+        if(data.emotion === "positive") emoji.innerText = "😄";
+        else if(data.emotion === "negative") emoji.innerText = "😔";
+        else emoji.innerText = "🙂";
+
+        emoji.classList.add("bounce");
+        setTimeout(()=>emoji.classList.remove("bounce"),500);
+
+        // CHART
+        let values = [0,0,0];
+        if(data.emotion === "positive") values[0] = 100;
+        else if(data.emotion === "negative") values[1] = 100;
+        else values[2] = 100;
+
+        chart.data.datasets[0].data = values;
+        chart.update();
+    })
+    .catch(err => {
+        console.error(err);
+        addMessage("MindGuard AI: Error occurred, try again.", "bot");
+    });
+}
+
+
+// 💬 ADD MESSAGE
+function addMessage(msg, type){
+    let div = document.createElement("div");
+    div.className = "chat-message " + type;
+    div.innerText = msg;
+    document.getElementById("chatBox").appendChild(div);
+}
+
+
+// 🤖 TYPE BOT (FIXED)
+function typeBot(text, emotion){
+    let chatBox = document.getElementById("chatBox");
+
+    let div = document.createElement("div");
+    div.className = "chat-message bot";
+    chatBox.appendChild(div);
+
+    let i = 0;
+    function type(){
+        if(i < text.length){
+            div.innerText += text.charAt(i);   // SAFE FIX
+            i++;
+            setTimeout(type, 20);
+        }
+    }
+    type();
+}
+</script>
+
+</body>
+</html>

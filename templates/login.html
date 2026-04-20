@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MindGuard AI</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            margin: 0;
+        }
+
+        .container {
+            width: 400px;
+            margin: 80px auto;
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #chatbox {
+            margin-top: 20px;
+            text-align: left;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>MindGuard AI 🤖</h2>
+
+    <!-- Fake Login -->
+    <input type="text" id="username" placeholder="Enter your name">
+    <button onclick="start()">Start Chat</button>
+
+    <div id="chatSection" style="display:none;">
+        <div id="chatbox"></div>
+
+        <input type="text" id="msg" placeholder="Type message">
+        <button onclick="send()">Send</button>
+    </div>
+</div>
+
+<script>
+function start(){
+    let name = document.getElementById("username").value;
+    if(name === ""){
+        alert("Enter name first!");
+        return;
+    }
+    document.getElementById("chatSection").style.display = "block";
+}
+
+function send(){
+    let msg = document.getElementById("msg").value;
+
+    fetch('/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: msg})
+    })
+    .then(res => res.json())
+    .then(data => {
+        let chatbox = document.getElementById("chatbox");
+
+        chatbox.innerHTML += "<p><b>You:</b> " + msg + "</p>";
+        chatbox.innerHTML += "<p><b>Bot:</b> " + data.reply + " (" + data.emotion + ")</p>";
+
+        document.getElementById("msg").value = "";
+        chatbox.scrollTop = chatbox.scrollHeight;
+    });
+}
+</script>
+
+</body>
+</html>

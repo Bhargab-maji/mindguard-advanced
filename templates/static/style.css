@@ -1,0 +1,307 @@
+/* General Styles */
+:root {
+    --primary-color: #6a11cb;
+    --secondary-color: #2575fc;
+    --dark-bg: #1c1c2e;
+    --card-bg: rgba(30, 30, 45, 0.8);
+    --text-light: #e0e0e0;
+    --text-dark: #f0f0f0;
+    --positive-color: #8bc34a; /* Light Green */
+    --negative-color: #f44336; /* Red */
+    --neutral-color: #ffeb3b; /* Yellow */
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-light);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+/* Glassmorphism Card Effect */
+.main-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.125);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Spacing between sections */
+}
+
+/* App Title */
+.app-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    letter-spacing: 0.5px;
+}
+
+.app-title i {
+    color: var(--positive-color); /* Brain icon color */
+}
+
+.app-title .tagline {
+    font-size: 0.5em;
+    font-weight: 400;
+    opacity: 0.7;
+    margin-left: 5px;
+    align-self: flex-end; /* Align tagline below main title */
+    display: block; /* Force new line */
+}
+
+/* Input Area */
+.input-area {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.input-area input {
+    flex-grow: 1;
+    padding: 15px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08); /* Lighter input background for glass effect */
+    border-radius: 10px;
+    color: var(--text-dark);
+    font-size: 1em;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-area input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.input-area input:focus {
+    border-color: var(--positive-color);
+    box-shadow: 0 0 10px rgba(139, 195, 74, 0.4);
+}
+
+.input-area button {
+    padding: 15px 20px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #1cb866, #37a0ef); /* Gradient button */
+    color: white;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.input-area button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.input-area button:active {
+    transform: translateY(0);
+}
+
+/* Chat Display */
+.chat-display {
+    max-height: 250px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.chat-display::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-display::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.chat-display::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 10px;
+}
+
+.chat-message {
+    padding: 10px 15px;
+    border-radius: 15px; /* Softer edges for bubbles */
+    max-width: 80%;
+    position: relative;
+    font-size: 0.95em;
+    line-height: 1.4;
+    word-wrap: break-word; /* Ensure long words break */
+}
+
+.chat-message.user {
+    background: var(--primary-color); /* User message background */
+    align-self: flex-end;
+    /* Add a small arrow for bubble effect */
+    border-bottom-right-radius: 5px;
+}
+
+.chat-message.bot {
+    background: #3a3a50; /* Bot message background */
+    align-self: flex-start;
+    /* Add a small arrow for bubble effect */
+    border-bottom-left-radius: 5px;
+}
+
+.chat-message .emotion-tag {
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-left: 8px;
+    padding: 3px 8px;
+    border-radius: 8px;
+    color: var(--dark-bg);
+    background-color: var(--neutral-color); /* Default */
+    vertical-align: middle;
+}
+
+.chat-message.bot.positive .emotion-tag {
+    background-color: var(--positive-color);
+}
+.chat-message.bot.negative .emotion-tag {
+    background-color: var(--negative-color);
+}
+.chat-message.bot.neutral .emotion-tag {
+    background-color: var(--neutral-color);
+}
+
+.bot-error {
+    color: var(--negative-color);
+    font-weight: 600;
+}
+
+
+/* Feedback Area (Emoji) */
+.feedback-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.mood-indicator {
+    font-size: 4em; /* Larger emoji */
+    margin: 0;
+    transition: transform 0.2s ease-out;
+}
+
+.emoji-label {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-light);
+    opacity: 0.8;
+}
+
+/* Animations */
+.bounce {
+    animation: bounce 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+@keyframes bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.listening {
+    color: var(--negative-color) !important;
+    animation: pulse-mic 1s infinite;
+    transform: scale(1.1); /* Slightly larger when listening */
+}
+
+@keyframes pulse-mic {
+    0% { background: linear-gradient(45deg, #1cb866, #37a0ef); box-shadow: 0 0 0 rgba(255, 255, 255, 0.4); }
+    50% { background: var(--negative-color); box-shadow: 0 0 15px rgba(244, 67, 54, 0.7); }
+    100% { background: linear-gradient(45deg, #1cb866, #37a0ef); box-shadow: 0 0 0 rgba(255, 255, 255, 0.4); }
+}
+
+/* Chart Area */
+.chart-area {
+    position: relative;
+    width: 100%;
+    max-width: 350px; /* Control chart size better */
+    height: 350px;
+    margin: 20px auto 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#moodChart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-card {
+        padding: 25px;
+        margin: 20px auto;
+        gap: 20px;
+    }
+
+    .app-title {
+        font-size: 1.8em;
+        flex-direction: column;
+    }
+    .app-title .tagline {
+        font-size: 0.6em;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+
+    .input-area {
+        flex-direction: column;
+    }
+
+    .input-area button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .input-area input {
+        width: calc(100% - 40px); /* Adjust for padding */
+    }
+
+    .chat-message {
+        max-width: 95%;
+    }
+
+    .mood-indicator {
+        font-size: 3em;
+    }
+
+    .chart-area {
+        max-width: 300px;
+        height: 300px;
+    }
+}
